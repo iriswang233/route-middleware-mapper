@@ -1,0 +1,22 @@
+{
+  "name": "router-middleware-mapper",
+  "version": "1.0.0",
+  "description": "map different middlewares for differet router",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "express.js",
+    "nodejs",
+    "router",
+    "middleware"
+  ],
+  "author": "iris",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.1.3",
+    "rewire": "^4.0.1"
+  }
+}

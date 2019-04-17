@@ -1,0 +1,20 @@
+{
+  "/*": ["isAuthenticated"],
+  "/health": {
+    "/*": true,
+    "/test":["isAuthenticated"],
+    "/admin": ["isAdmin"]
+  },
+  "/:id": {
+    "/*": true,
+    "/info": ["isAuthenticated"],
+    "/role": ["isAdmin"]
+  },
+  "/:name": {
+    "/userinfo": ["isAdmin"],
+    "/testinfo": {
+      "/:test": ["isAdmin"]
+    },
+    "/:id": ["isAuthenticated"]
+  }
+}

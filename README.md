@@ -1,4 +1,4 @@
-#router-middleware-mapper
+# router-middleware-mapper
 > A simple package to map different routes with different middlewares in nodejs project
 ## Getting started
 
@@ -75,7 +75,7 @@ All the keys means the routes.
 All the values means the middlewares that required by the route.
 If the value is
   1) string array, it means the route will go through these middlewares one by one. So each string here represents the middleware in "policies" folder, and the order of strings matters.
-  2)true, it means this route don't need to go throuth any middlewares.
+  2) true, it means this route don't need to go throuth any middlewares.
 
 ## Mapping
 

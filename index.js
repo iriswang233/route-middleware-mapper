@@ -1,5 +1,4 @@
-const pathName = "policies";
-const normalizedPath = require("path").join(__dirname,'../..', pathName);
+const normalizedPath = require("path").join(__dirname,'../..', 'policies');
 const getPoliciesHandles = () => {
   let allHandles = {};
   const fs = require("fs");

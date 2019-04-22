@@ -7,8 +7,7 @@ describe('mapping index', () => {
   let transformPolicies, getMiddlewares, mappingModule, getPoliciesHandles, executeMiddlewares;
   beforeEach(() => {
     mappingModule = rewire('../index.js');
-    mappingModule.__set__('pathName',`./test/policies`);
-    mappingModule.__set__('policiesConfig',require(`./policies/config.json`));
+    mappingModule.__set__('normalizedPath',`./test/policies`);
     transformPolicies = mappingModule.__get__('transformPolicies');
     getMiddlewares = mappingModule.__get__('getMiddlewares');
     getPoliciesHandles = mappingModule.__get__('getPoliciesHandles');

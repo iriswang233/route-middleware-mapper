@@ -5,16 +5,24 @@
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "prepublish": "npm run test"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iriswang233/route-middleware-mapper"
+  },
+  "homepage": "https://github.com/iriswang233/route-middleware-mapper#readme",
+  "bugs": "https://github.com/iriswang233/route-middleware-mapper/issues",
   "keywords": [
+    "route",
+    "middleware",
+    "mapper",
     "express.js",
-    "nodejs",
-    "router",
-    "middleware"
+    "nodejs"
   ],
-  "author": "iris",
-  "license": "ISC",
+  "author": "iris <hellocomplex007@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
     "chai": "^4.2.0",
     "coveralls": "^3.0.3",

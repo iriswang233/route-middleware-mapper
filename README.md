@@ -89,5 +89,10 @@ All routes need to go through "isAuthenticated". So
   4) route "/name/testinfo/2" will go through "fromClient" and "isAdmin". Because it matches the "/name/testinfo/:id".
 
 
+## Contribution
 
-
+1. Fork it!
+2. Create your feature branch: `git checkout -b feature-branch`
+3. Commit your changes: `git commit -am 'Some message to describe the changes'`
+4. Push to the branch: `git push origin feature-branch`
+5. Submit a pull request

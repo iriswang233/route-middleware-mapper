@@ -1,5 +1,8 @@
 # router-middleware-mapper
+[![Build Status](https://travis-ci.com/iriswang233/route-middleware-mapper.svg?branch=master)](https://travis-ci.org/iriswang233/route-middleware-mapper) [![Coverage Status](https://coveralls.io/repos/github/iriswang233/route-middleware-mapper/badge.svg?branch=master)](https://coveralls.io/github/iriswang233/route-middleware-mapper?branch=master)
+
 > A simple package to map different routes with different middlewares in nodejs project
+
 ## Getting started
 
 - [Install](#install)
@@ -41,7 +44,7 @@ For example,
 All the js files are middlewares. You can have one like this
 
 ```sh
-const isAuthenticated = (req, res, next) => {
+const isAuthenticated = (req, res) => {
   console.dir('isAuthenticated');
 };
 
@@ -72,10 +75,7 @@ All the keys means the routes.
   "/xxx" means specific route.  
   "/:" means dynamic route.
 
-All the values means the middlewares that required by the route.
-If the value is
-  1) string array, it means the route will go through these middlewares one by one. So each string here represents the middleware in "policies" folder, and the order of strings matters.
-  2) true, it means this route don't need to go throuth any middlewares.
+The values should be string array and means the middlewares that required by the route. So each string here represents the middleware in "policies" folder, and the order of strings matters.
 
 ## Mapping
 

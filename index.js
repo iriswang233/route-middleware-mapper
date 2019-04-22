@@ -18,7 +18,7 @@ const transformPolicies = (policies) => {
     if(path.includes(':')){
       newPolicies['/:'] = newPolicies['/:']? Object.assign({},policies[path],newPolicies['/:']):policies[path];
     } else {
-      newPolicies[path] = newPolicies[path]? Object.assign({},policies[path],newPolicies[path]):policies[path];
+      newPolicies[path] = Object.assign({},policies[path],newPolicies[path]);
     }
   })
   return newPolicies;
@@ -54,15 +54,13 @@ const getMiddlewares = (path, policies) => {
   return middlewares;
 }
 
-const mapping = (req, res, next) => {
+const executeMiddlewares = (req, res, next) => {
   const policiesConfig = require(`./${pathName}/config.json`);
   const middlewares = getMiddlewares(req.path,policiesConfig);
-  if(Array.isArray(middlewares)){
-    const handles = getPoliciesHandles();
-    for (let i = 0 ; i < middlewares.length; i ++) {
-      handles[middlewares[i]](req, res, next);
-    }
+  const handles = getPoliciesHandles();
+  for (let i = 0 ; i < middlewares.length; i ++) {
+    handles[middlewares[i]](req, res);
   }
   next();
 }
-module.exports = mapping;
+module.exports = executeMiddlewares;

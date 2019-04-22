@@ -1,7 +1,7 @@
 {
-  "name": "router-middleware-mapper",
+  "name": "route-middleware-mapper",
   "version": "1.0.2",
-  "description": "map different middlewares for differet router",
+  "description": "mapping routes with middlewares",
   "main": "index.js",
   "scripts": {
     "test": "nyc mocha",

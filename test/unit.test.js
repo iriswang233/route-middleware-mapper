@@ -52,6 +52,10 @@ describe('mapping index', () => {
       const middlewares = getMiddlewares('/health/user', mockPolicies);
       expect(middlewares).to.be.an('array').to.have.lengthOf(0);
     })
+    it('should return defined middlewares when the request path exist', () => {
+      const middlewares = getMiddlewares('/health/test', mockPolicies);
+      expect(middlewares).to.be.an('array').to.have.lengthOf(1).that.includes('isAuthenticated');
+    })
   });
   describe('execute correct middlewares', () => {
     it('should call next() once', function() {

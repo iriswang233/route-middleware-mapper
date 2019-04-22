@@ -1,12 +1,10 @@
-const pathName = "policies";
-
+const normalizedPath = require("path").join(__dirname,'../..', 'policies');
 const getPoliciesHandles = () => {
   let allHandles = {};
-  const normalizedPath = require("path").join(__dirname, pathName);
   const fs = require("fs");
   fs.readdirSync(normalizedPath).forEach(function(file) {
     if(!file.includes('.json') && file.includes('.js')) {
-      allHandles[file.replace('.js','')] = require(`./${pathName}/` + file);
+      allHandles[file.replace('.js','')] = require(`${normalizedPath}/${file}`);
     }
   });
   return allHandles;
@@ -16,9 +14,9 @@ const transformPolicies = (policies) => {
   let newPolicies = {};
   Object.keys(policies).forEach(path => {
     if(path.includes(':')){
-      newPolicies['/:'] = newPolicies['/:']? Object.assign({},policies[path],newPolicies['/:']):policies[path];
+      newPolicies['/:'] = newPolicies['/:']? Object.assign({},policies[path],newPolicies['/:']) : policies[path];
     } else {
-      newPolicies[path] = newPolicies[path]? Object.assign({},policies[path],newPolicies[path]):policies[path];
+      newPolicies[path] = Array.isArray(policies[path])? policies[path] : Object.assign({},policies[path],newPolicies[path]);
     }
   })
   return newPolicies;
@@ -54,15 +52,13 @@ const getMiddlewares = (path, policies) => {
   return middlewares;
 }
 
-const mapping = (req, res, next) => {
-  const policiesConfig = require(`./${pathName}/config.json`);
+const executeMiddlewares = (req, res, next) => {
+  const policiesConfig = require(`${normalizedPath}/config.json`);
   const middlewares = getMiddlewares(req.path,policiesConfig);
-  if(Array.isArray(middlewares)){
-    const handles = getPoliciesHandles();
-    for (let i = 0 ; i < middlewares.length; i ++) {
-      handles[middlewares[i]](req, res, next);
-    }
+  const handles = getPoliciesHandles();
+  for (let i = 0 ; i < middlewares.length; i ++) {
+    handles[middlewares[i]](req, res);
   }
   next();
 }
-module.exports = mapping;
+module.exports = executeMiddlewares;

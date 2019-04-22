@@ -58,7 +58,7 @@ For example,
 {
   "/*": ["isAuthenticated"],
   "/health": {
-    "/*": true,
+    "/*": [],
     "/test":["isAuthenticated"],
     "/admin": ["isAdmin"]
   },

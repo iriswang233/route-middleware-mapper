@@ -2,4 +2,6 @@ const isAuthenticated = (req, res, next) => {
   console.dir('isAuthenticated');
 };
 
-module.exports = isAuthenticated;
+module.exports = {
+  isAuthenticated
+};

@@ -1,12 +1,15 @@
-const normalizedPath = require("path").join(__dirname,'../..', 'policies');
-const getPoliciesHandles = () => {
-  let allHandles = {};
-  const fs = require("fs");
-  fs.readdirSync(normalizedPath).forEach(function(file) {
-    if(!file.includes('.json') && file.includes('.js')) {
-      allHandles[file.replace('.js','')] = require(`${normalizedPath}/${file}`);
-    }
-  });
+const path = require("path");
+const fs = require("fs");
+
+const getPoliciesHandles = (normalizedPath) => {
+  let allHandles = null;
+  if(fs.existsSync(normalizedPath)) {
+    fs.readdirSync(normalizedPath).forEach(function(file) {
+      if(!file.includes('.json') && file.includes('.js')) {
+        allHandles = Object.assign({},{[file.replace('.js','')]:require(`${normalizedPath}/${file}`)},allHandles);
+      }
+    });
+  }
   return allHandles;
 }
 
@@ -51,13 +54,30 @@ const getMiddlewares = (path, policies) => {
   }
   return middlewares;
 }
+const getPoliciesConfig = (normalizedPath)=>{
+  const configJsonPath = `${normalizedPath}/config.json`;
+  let policiesConfig = null;
+  if(fs.existsSync(configJsonPath)) {
+    policiesConfig = require(configJsonPath);
+  }
+  return policiesConfig;
+}
 
-const executeMiddlewares = (req, res, next) => {
-  const policiesConfig = require(`${normalizedPath}/config.json`);
-  const middlewares = getMiddlewares(req.path,policiesConfig);
-  const handles = getPoliciesHandles();
-  for (let i = 0 ; i < middlewares.length; i ++) {
-    handles[middlewares[i]](req, res);
+const executeMiddlewares = (policiesPath) => (req, res, next) => {
+  const normalizedPath = path.join(__dirname, '../..', policiesPath);
+  const policiesConfig = getPoliciesConfig(normalizedPath);
+  if(policiesConfig) {
+    const middlewares = getMiddlewares(req.path, policiesConfig);
+    if(middlewares.length > 0) {
+      const handles = getPoliciesHandles(normalizedPath);
+      if(handles) {
+        for (let i = 0 ; i < middlewares.length; i ++) {
+          if(handles[middlewares[i]]) {
+            handles[middlewares[i]](req, res);
+          }
+        }
+      }
+    }
   }
   next();
 }

@@ -6,7 +6,7 @@ const getPoliciesHandles = (normalizedPath) => {
   if(fs.existsSync(normalizedPath)) {
     fs.readdirSync(normalizedPath).forEach(function(file) {
       if(!file.includes('.json') && file.includes('.js')) {
-        allHandles = Object.assign({},{[file.replace('.js','')]:require(`${normalizedPath}/${file}`)},allHandles);
+        allHandles = Object.assign({},require(`${normalizedPath}/${file}`),allHandles);
       }
     });
   }
@@ -63,8 +63,7 @@ const getPoliciesConfig = (normalizedPath)=>{
   return policiesConfig;
 }
 
-const executeMiddlewares = (policiesPath) => (req, res, next) => {
-  const normalizedPath = path.join(__dirname, '../..', policiesPath);
+const executeMiddlewares = (normalizedPath) => (req, res, next) => {
   const policiesConfig = getPoliciesConfig(normalizedPath);
   if(policiesConfig) {
     const middlewares = getMiddlewares(req.path, policiesConfig);

@@ -30,7 +30,9 @@ For example,
 const express = require('express');
 const app = express();
 const routeMiddlewareMapper = require('route-middleware-mapper')
-app.use (routeMiddlewareMapper('./policies')); #This path should be valid and contains a config.json and some middleware js files.
+app.use (routeMiddlewareMapper(`${__dirname}/authentication`)); 
+#This path should be a valid absolute path and contains a config.json 
+#and some middleware js files.
 
 app.use(routes);
 ...
@@ -57,11 +59,13 @@ For example,
 All the js files are middlewares. You can have one like this
 
 ```sh
-const isAuthenticated = (req, res) => {
+const isAuthenticated = (req, res, next) => {
   console.dir('isAuthenticated');
 };
 
-module.exports = isAuthenticated;
+module.exports = {
+  isAuthenticated
+}; # an object should be exported.
 ```
 
 ### Configuration

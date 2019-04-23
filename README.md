@@ -24,11 +24,24 @@ $ yarn add route-middleware-mapper
 ```
 
 ## Use
-After the installation you can import the package to your nodejs project.
+After the installation you can require the package to your nodejs project.
+For example,
+```sh
+const express = require('express');
+const app = express();
+const routeMiddlewareMapper = require('route-middleware-mapper')
+app.use (routeMiddlewareMapper('./policies')); #This path should be valid and contains a config.json and some middleware js files.
+
+app.use(routes);
+...
+
+```
 
 ### Policies
 Create a folder named "policies" in project root.
 This "policies" folder contains all middlewares that are used by routes and the mapping configuration file.
+Other folder can be use too, if it follows the structure.
+Please remember DO pass the path of this folder when this library is used.(See the example above).
 
 For example,
 ```sh
@@ -71,22 +84,22 @@ For example,
 }
 ```
 All the keys means the routes.
-  "/*" means all routes with certain path.
-  "/xxx" means specific route.  
+  "/*" means all routes.
+  "/xxx" means a specific route.  
   "/:" means dynamic route.
 
-The values should be string array and means the middlewares that required by the route. So each string here represents the middleware in "policies" folder, and the order of strings matters.
+The values should be string array which contains the middlewares that required by the route. So each string here represents the middleware in "policies" folder, and the order of strings matters.
 
 ## Mapping
 
 The route will be mapped to the key that closest to it. But if the specific route is not defined in the file, more general key will be used.
 
 In previous example, 
-All routes need to go through "isAuthenticated". So
-  1) route "/hello" will go through "isAuthenticated". Because there is no closer key defined here than "/*".
-  2) route "/health/info" don't have any middleware. Beacuse its closet route is all routes("/*") with "/health", which its value is "true".
-  3) route "/name/role" will go through "isAuthenticated". Beacuse although its closet route is "/name", but neither "/*" nor "/role" is defined under "/name", so it turns to a more general route "/*".
-  4) route "/name/testinfo/2" will go through "fromClient" and "isAdmin". Because it matches the "/name/testinfo/:id".
+  1) All routes need to go through "isAuthenticated". 
+  2) route "/hello" will go through "isAuthenticated". Because there is no closer key defined here than "/*".
+  3) route "/health/info" don't have any middlewares. Beacuse its closet route is all routes("/*") under "/health", which its value is "true".
+  4) route "/name/role" will go through "isAuthenticated". Beacuse although its closet route is "/name", but neither "/*" nor "/role" is defined under "/name", so it turns to a more general route "/*".
+  5) route "/name/testinfo/2" will go through "fromClient" and "isAdmin". Because it matches the "/name/testinfo/:id".
 
 
 ## Contribution

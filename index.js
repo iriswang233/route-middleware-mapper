@@ -63,21 +63,25 @@ const getPoliciesConfig = (normalizedPath)=>{
   return policiesConfig;
 }
 
-const executeMiddlewares = (normalizedPath) => (req, res, next) => {
+const executeMiddlewares = (normalizedPath) => async (req, res, next) => {
   const policiesConfig = getPoliciesConfig(normalizedPath);
   if(policiesConfig) {
     const middlewares = getMiddlewares(req.path, policiesConfig);
     if(middlewares.length > 0) {
-      const handles = getPoliciesHandles(normalizedPath);
+      let handles = getPoliciesHandles(normalizedPath);
       if(handles) {
         for (let i = 0 ; i < middlewares.length; i ++) {
-          if(handles[middlewares[i]]) {
-            handles[middlewares[i]](req, res);
+          if(handles[middlewares[i]] && !res.headersSent) {
+            await handles[middlewares[i]](req, res);
           }
         }
       }
     }
   }
-  next();
+  if(!res.headersSent){
+    next();
+  } else {
+    return;
+  }
 }
 module.exports = executeMiddlewares;

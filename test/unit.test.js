@@ -12,7 +12,6 @@ describe('mapping index', () => {
   const policiesPath = require("path").join(__dirname, 'policies');
   const emptyPoliciesPath = require("path").join(__dirname, 'empty_policies');
   const emptyPath = require("path").join(__dirname, 'empty');
-  const emptyConfigPath = require("path").join(__dirname, 'empty_config');
 
   beforeEach(() => {
     mappingModule = rewire('../index.js');
@@ -33,7 +32,7 @@ describe('mapping index', () => {
   describe('get policies handles from policies folder', () => {
     it('should get correct number of handles', () => {
       const handles = getPoliciesHandles(policiesPath);
-      expect(handles).to.have.all.keys('isAdmin','isAuthenticated');
+      expect(handles).to.have.all.keys('isAdmin','isAuthenticated','isUser');
     })
     it('should get null if the folder does not exists', () => {
       const handles = getPoliciesHandles('');
@@ -56,7 +55,7 @@ describe('mapping index', () => {
     it('should combine dynamic path into one', () => {
       const transformedPolicies = transformPolicies(mockPolicies);
       expect(transformedPolicies).to.have.property('/:');
-      expect(transformedPolicies['/:']).to.have.all.keys('/info', '/role', '/userinfo','/testinfo','/:id');
+      expect(transformedPolicies['/:']).to.have.all.keys('/info', '/role', '/userinfo','/testinfo');
     })
   });
   describe('get middlewares for the requested path', () => {
@@ -91,12 +90,13 @@ describe('mapping index', () => {
       expect(config).to.be.an('object');
     })
   });
-  describe('execute correct middlewares if policies files exist', () => {
+  describe('execute correct middlewares', () => {
     let handles, getPoliciesHandles;
     beforeEach(() => {
       handles = {
         isAuthenticated: sinon.spy(),
-        isAdmin: sinon.spy()
+        isAdmin: sinon.spy(),
+        isUser: sinon.spy()
       }
       getPoliciesHandles = () => ({
         ...handles
@@ -110,7 +110,7 @@ describe('mapping index', () => {
       const req = {
         path:'/test'
       };
-      executeMiddlewares(emptyConfigPath)(req, {}, nextSpy);
+      executeMiddlewares(emptyPath)(req, {}, nextSpy);
       expect(handles.isAuthenticated).to.have.callCount(0);
       expect(handles.isAdmin).to.have.callCount(0);
       expect(nextSpy.calledOnce).to.be.true;
@@ -126,33 +126,41 @@ describe('mapping index', () => {
       expect(handles.isAdmin).to.have.callCount(0);
       expect(nextSpy.calledOnce).to.be.true;
     });
-    it('should not call the middleware if it is not defined in folder', function() {
+    it('should not call the middleware if it is not defined in folder', async () => {
       const nextSpy = sinon.spy();
       const req = {
         path:'/test/role'
       };
-      executeMiddlewares(policiesPath)(req, {}, nextSpy);
+      await executeMiddlewares(policiesPath)(req, {}, nextSpy);
       expect(handles.isAdmin).to.have.been.calledOnce;
       expect(nextSpy).to.have.been.calledOnce.and.calledAfter(handles.isAdmin);
     });
-    it('should call policy middlewares one by one', function() {
+    it('should break the middleware chain if the response is sent in one response', async () => {
+      const nextSpy = sinon.spy();
+      const req = {
+        path:'/1/info'
+      };
+      await executeMiddlewares(policiesPath)(req, {headersSent: true}, nextSpy);
+      expect(nextSpy.calledOnce).to.be.false;
+    });
+    it('should call policy middlewares one by one', async () => {
       const nextSpy = sinon.spy();
       const req = {
         path:'/reporter/testinfo/info'
       };
-      executeMiddlewares(policiesPath)(req, {}, nextSpy);
+      await executeMiddlewares(policiesPath)(req, {}, nextSpy);
       expect(handles.isAuthenticated).to.have.been.calledOnce;
       expect(handles.isAdmin).to.have.been.calledOnce.and.calledAfter(handles.isAuthenticated);
       expect(nextSpy).to.have.been.calledOnce.and.calledAfter(handles.isAdmin);
     });
   });
   describe(('not execute any middlewares if mapper config does not exist'), () => {
-    it('should call next() once if the the policies does not exists', () => {
+    it('should call next() once if the the policies does not exists', async () => {
       const nextSpy = sinon.spy();
       const req = {
         path:'/test'
       };
-      executeMiddlewares(emptyPoliciesPath)(req, {}, nextSpy);
+      await executeMiddlewares(emptyPoliciesPath)(req, {}, nextSpy);
       expect(nextSpy.calledOnce).to.be.true;
     });
   });

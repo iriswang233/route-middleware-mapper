@@ -1,6 +1,6 @@
 {
   "name": "route-middleware-mapper",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "mapping routes with middlewares",
   "main": "index.js",
   "scripts": {
